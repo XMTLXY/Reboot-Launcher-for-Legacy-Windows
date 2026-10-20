@@ -33,6 +33,8 @@ Get **Reboot Launcher 10.0.9 for Windows 7** (`reboot_launcher-10.0.9-windows-se
 5. Click **Apply**, then **OK**, and open the launcher. If it was already open, restart it.
 6. In the launcher, keep the backend set to **Embedded** (the default).
 
+> **Don't update the launcher.** If Reboot Launcher offers an update, decline it, and don't install the official version over this one. Updates replace the fixed files and will likely break the launcher on Windows 7. Wait for a new release here instead.
+
 ## Multiplayer
 
 The launcher's online server list doesn't work, so use [Radmin VPN](https://www.radmin-vpn.com/). It works on Windows 7.
