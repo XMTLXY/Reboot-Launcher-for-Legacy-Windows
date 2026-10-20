@@ -1,8 +1,8 @@
 # Reboot-Launcher-for-Legacy-Windows
 
-Project Reboot Launcher, fixed to work on legacy Windows.
+Project Reboot Launcher fixed to run on legacy Windows. Windows 7 is done, and Vista and XP are next.
 
-The current release is **Reboot Launcher 10.0.9 for Windows 7**, for Windows 7 (64-bit, SP1).
+The current release is **Reboot Launcher 10.0.9 for Windows 7** (with VxKex), for Windows 7 (64-bit, SP1).
 
 - The launcher needs [VxKex](https://github.com/i486/VxKex) to run on Windows 7.
 - Fortnite runs normally. It does **not** use VxKex.
@@ -13,6 +13,13 @@ On Windows 10 and 11 you don't need VxKex.
 ## Download
 
 Get **Reboot Launcher 10.0.9 for Windows 7** (`reboot_launcher-10.0.9-windows-setup.exe`) from the [Releases](../../releases) page.
+
+## Tested game build
+
+**Fortnite 6.31** is tested and working with this release:
+
+- Download: [windows-6.31.rar](https://builds.rebootfn.org/windows-6.31.rar)
+- From: [bekka0668/FortniteArchive](https://github.com/bekka0668/FortniteArchive)
 
 ## How to use
 
