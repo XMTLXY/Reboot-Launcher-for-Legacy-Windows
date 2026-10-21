@@ -1,39 +1,96 @@
 # Reboot-Launcher-for-Legacy-Windows
 
-Project Reboot Launcher fixed to run on legacy Windows. Windows 7 is done, and Vista and XP are next.
+Project Reboot Launcher fixed to run on legacy Windows. Windows 7 and Vista are done, and XP is next.
 
-The current release is **Reboot Launcher 10.0.9 for Windows 7** (with VxKex), for Windows 7 (64-bit, SP1).
+The current release is **Reboot Launcher 10.0.9 for Windows 7 and Vista**, for **Windows 7 (64-bit, SP1)** and **Windows Vista (64-bit, SP2)**.
 
-- The launcher needs [VxKex](https://github.com/i486/VxKex) to run on Windows 7.
-- Fortnite runs normally. It does **not** use VxKex.
-- The built-in backend works on Windows 7 without VxKex.
+- **Runs natively. No VxKex needed.** A small extra file, `w7compat.dll`, provides the newer Windows functions the launcher uses.
+- The built-in backend runs on **Node.js 22**, using a build modified to run on Windows 7 from [W7Revived](https://w7revived.chefkiss.dev/). It also runs on Vista with the Extended Kernel.
+- **On Vista, the [Windows Vista Extended Kernel](https://win32subsystem.live/extended-kernel/) is needed** for Fortnite and for the Node.js 22 backend. The launcher itself runs without it.
 
-On Windows 10 and 11 you don't need VxKex.
+## Roadmap
+
+- [x] **Windows 7**: done. The first release (Reboot Launcher 10.0.9 for Windows 7) needed VxKex. The current release (Reboot Launcher 10.0.9 for Windows 7 and Vista) runs natively, with no VxKex needed.
+- [x] **Windows Vista**: done, in the current release (Reboot Launcher 10.0.9 for Windows 7 and Vista). The launcher runs natively; Fortnite needs the Extended Kernel.
+- [ ] **Hosting on Windows 7 and Vista**: likely needs a fixed `reboot.dll`
+- [ ] **Windows XP**: next
+- [ ] **One launcher for all three**: a single version that runs on Windows 7, Vista and XP, instead of separate ones
 
 ## Download
 
-Get **Reboot Launcher 10.0.9 for Windows 7** (`reboot_launcher-10.0.9-windows-setup.exe`) from the [Releases](../../releases) page.
+Get **Reboot Launcher 10.0.9 for Windows 7 and Vista** (`reboot_launcher-10.0.9-windows-setup.exe`) from the [Releases](../../releases) page.
 
-## Tested game build
+## Tested
 
-**Fortnite 6.31** is tested and working with this release:
+| Windows | Launcher | Backend | Fortnite |
+|---|---|---|---|
+| Windows 7 SP1 x64 | Works | Works | 6.10.2: loads into a match |
+| Windows Vista SP2 x64 + Extended Kernel | Works | Works | 1.8: tested up to the lobby |
 
-- Download: [windows-6.31.rar](https://builds.rebootfn.org/windows-6.31.rar)
-- From: [bekka0668/FortniteArchive](https://github.com/bekka0668/FortniteArchive)
+Hosting a game server doesn't work yet on Windows 7 or Vista. See [Known problems](#known-problems).
 
-## How to use
+## Setup
 
-1. Install [VxKex](https://github.com/i486/VxKex).
-2. Run `reboot_launcher-10.0.9-windows-setup.exe`. At the end it tells you whether VxKex was found.
-3. Go to the install folder (normally `C:\Program Files\Reboot Launcher`), right-click `reboot_launcher.exe`, then choose **Properties** and the **VxKex** tab.
-4. Tick:
-   - **Enable VxKex for this program**
-   - **Report a different version of Windows**: **Windows 10**
-   - **Disable VxKex for child processes**. This one is important: without it, Fortnite crashes.
-5. Click **Apply**, then **OK**, and open the launcher. If it was already open, restart it.
-6. In the launcher, keep the backend set to **Embedded** (the default).
+### Windows 7
 
-> **Don't update the launcher.** If Reboot Launcher offers an update, decline it, and don't install the official version over this one. Updates replace the fixed files and will likely break the launcher on Windows 7. Wait for a new release here instead.
+1. Run `reboot_launcher-10.0.9-windows-setup.exe` and follow the installer. It installs to `C:\Program Files\Reboot Launcher` by default and installs the Visual C++ runtime the launcher needs. Install to a local drive: from a slow or network drive the backend can start too slowly for the launcher.
+2. Open Reboot Launcher.
+3. In the launcher, keep the backend set to **Embedded** (the default).
+
+You don't need to change your Fortnite builds on Windows 7. If a build comes with **DXVK** files, you can leave them there.
+
+If you used the VxKex version before, VxKex isn't needed any more. Turn it off for the launcher: right-click `reboot_launcher.exe` in the install folder, choose **Properties**, open the **VxKex** tab and untick **Enable VxKex for this program**.
+
+> **Don't update the launcher.** If Reboot Launcher offers an update, decline it, and don't install the official version over this one. Updates replace the fixed files and will break the launcher on Windows 7 and Vista. Wait for a new release here instead.
+
+### Windows Vista
+
+Do these steps in order, then the [Windows 7](#windows-7) steps above. Tested with Fortnite 1.8. On Vista, the installer shows at the end which of these are installed and which are missing.
+
+#### 1. Install the Windows Vista Extended Kernel
+
+Install the [Windows Vista Extended Kernel](https://win32subsystem.live/extended-kernel/) and follow its own instructions. It adds newer Windows functions to Vista, which Fortnite and the Node.js 22 backend need.
+
+#### 2. Install the four Platform Update parts
+
+The Platform Update for Vista (KB971644) can't be downloaded as one file any more. Its four parts are still on the [Microsoft Update Catalog](https://www.catalog.update.microsoft.com/). For each one, search the KB number, pick the **x64** entry ("Update for Windows Vista for x64-based Systems"), download it and install it:
+
+| Update | What it adds |
+|---|---|
+| [KB971512](https://www.catalog.update.microsoft.com/Search.aspx?q=KB971512) | DirectX 11 (Fortnite needs this one) |
+| [KB971513](https://www.catalog.update.microsoft.com/Search.aspx?q=KB971513) | Windows Automation API |
+| [KB971514](https://www.catalog.update.microsoft.com/Search.aspx?q=KB971514) | Windows Ribbon and Animation Manager |
+| [KB960362](https://www.catalog.update.microsoft.com/Search.aspx?q=KB960362) | Windows Imaging Component |
+
+The catalog site doesn't work in Vista's own browser (Internet Explorer). Download the updates with a newer browser that still runs on Vista, such as [Supermium](https://www.supermium.net/) (a Chrome-based browser for older Windows), or on another PC and copy the files over. Restart Vista after installing.
+
+#### 3. Install the DirectX End-User Runtime (June 2010)
+
+Install `directx_Jun2010_redist.exe` from Microsoft. Fortnite needs `XINPUT1_3.dll` and other DirectX parts from it. Without it you get **"XINPUT1_3.dll was not found"**.
+
+#### 4. Remove DXVK from the game folder (Vista only)
+
+Some Fortnite builds come with **DXVK**, which replaces DirectX with Vulkan. Vista has no Vulkan, so the game fails with **"vulkan-1.dll was not found"**. This step is only for Vista: on Windows 7, leave DXVK where it is.
+
+Go to `FortniteGame\Binaries\Win64` in your Fortnite build. If these files are there, move them to another folder (keep them in case you use the build on Windows 7 or newer):
+
+- `d3d9.dll`
+- `d3d10.dll`
+- `d3d10_1.dll`
+- `d3d10core.dll`
+- `d3d11.dll`
+- `dxgi.dll`
+
+Fortnite then uses Vista's own DirectX 11 from KB971512.
+
+### Limits on Windows 7 and Vista
+
+- **No pop-up notifications.** The launcher's Windows notifications ("toasts") need Windows 8 or newer. Everything else works without them.
+- **Solid window background.** The launcher's see-through background (Mica) only exists on Windows 11. On Windows 7 and Vista, as on Windows 10, the background is a solid colour. This is normal.
+
+## Known problems
+
+- **Hosting a game server doesn't work on Windows 7 or Vista.** The server crashes when a player joins. This is suspected to be a bug in Project Reboot's `reboot.dll`, not in this port.
 
 ## Multiplayer
 
@@ -45,73 +102,38 @@ The launcher's online server list doesn't work, so use [Radmin VPN](https://www.
 
 If someone can't connect, check that Windows Firewall isn't blocking Reboot Launcher or Fortnite.
 
-## Problems
+Hosting doesn't work on Windows 7 or Vista yet (see [Known problems](#known-problems)), so for now the host needs Windows 8 or newer. Players on Windows 7 can join.
+
+**On Vista:** it's not known yet whether Radmin VPN works on Vista, and multiplayer on Vista hasn't been tested. There's likely a way (for example another VPN that still supports Vista), but it hasn't been tried.
+
+## Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| "Entry point GetHostNameW could not be located" | VxKex isn't enabled for `reboot_launcher.exe` (step 3). |
-| Fortnite crashes in the lobby after about 30 seconds | Tick **Disable VxKex for child processes**, then restart the launcher. |
-| Can't log in to Fortnite | Set the backend to **Embedded**. |
-| Antivirus blocks the launcher | Add the install folder to your antivirus exclusions. |
+| "Entry point ... could not be located" when opening the launcher | `w7compat.dll` is missing from the install folder. Run the installer again. |
+| "XINPUT1_3.dll was not found" when launching Fortnite | Install the DirectX End-User Runtime (June 2010). See [Windows Vista](#windows-vista). |
+| "vulkan-1.dll was not found" when launching Fortnite on Vista | Remove the DXVK files from the game folder (Vista only). See [Windows Vista](#windows-vista). |
+| "d3d11.dll was not found" when launching Fortnite on Vista | Install KB971512. See [Windows Vista](#windows-vista). |
+| An "entry point" error from Fortnite or the backend on Vista | Install the Windows Vista Extended Kernel. See [Windows Vista](#windows-vista). |
+| Antivirus blocks the launcher | Add the install folder (normally `C:\Program Files\Reboot Launcher`) to your antivirus exclusions. |
 
-## Roadmap
+## How it works
 
-- [x] **Windows 7**: done (Reboot Launcher 10.0.9 for Windows 7)
-- [ ] **Windows Vista**: next, trying to get it working
-- [ ] **Windows XP**: if Vista works
-- [ ] **One launcher for all three**: a single version that runs on Windows 7, Vista and XP, instead of separate ones
+The launcher is a Flutter app built for Windows 10 and 11. It asks Windows for a handful of functions that only exist on newer versions, so Windows 7 and Vista refused to start it.
 
-## What I changed
-
-Three things are different from the normal 10.0.9.
-
-### 1. `flutter_windows.dll`: launcher crashing on startup
-
-- **Problem:** the newer way this file opens files doesn't work under VxKex, so the launcher couldn't load its own code and crashed instantly.
-- **Change:** 5 bytes at file offset `0x728823`, from `4C 8D 44 24 28` to `48 89 3E EB 39`. It now skips the broken step and uses the normal Windows file path.
-
-### 2. `data\app.so`: Fortnite crashing when launched
-
-- **Problem:** the launcher loads its DLLs into Fortnite using the address of a Windows function. Under VxKex, the launcher got VxKex's address instead of the real Windows one, and that address doesn't exist inside Fortnite.
-- **Change:** the text `"KERNEL32"` (file offset `0x29F7B0`) became `"KERNEL32.DLL."`. Windows still treats it as the real `kernel32.dll`, but VxKex doesn't recognise it, so the launcher gets the real address.
-
-### 3. Backend: Node.js 20 to Node.js 13
-
-- **Problem:** the built-in backend (`data\flutter_assets\assets\backend\lawinserver.exe`) was LawinServer bundled with Node.js 20, which doesn't run on Windows 7. So Fortnite couldn't log in.
-- **Change:** the same LawinServer code now runs on **Node.js 13.14.0**, the last version that supports Windows 7. In the backend folder:
-  - `node\node.exe`: official Node.js 13.14.0.
-  - `index.js`, `structure\`, `node_modules\`: LawinServer's code, taken out of the old exe unchanged.
-  - `lawinserver.exe`: now a small starter that runs LawinServer on Node 13. It also stops Node when the launcher stops the backend. Source in [`tools/lawinserver-shim`](tools/lawinserver-shim).
-
-### Installer
-
-The installer is the original Reboot Launcher installer, with the same pages and options, built from their own script and containing these fixed files. On Windows 7 it adds one page at the end that checks for VxKex and shows the setup steps.
-
-## What's in this repository
-
-| Path | What it is |
-|---|---|
-| `reboot_launcher.exe`, `*.dll`, `data\` | The patched Reboot Launcher 10.0.9 |
-| `installer\` | Installer script (`RebootLauncher-Win7.iss`), `build.cmd` and the Visual C++ runtime |
-| `tools\lawinserver-shim\` | Source of the `lawinserver.exe` starter |
-
-The unpatched files aren't included. You can get them from the [original Reboot Launcher](https://github.com/Auties00/reboot_launcher) 10.0.9 release.
-
-## Building the installer
-
-1. Install [Inno Setup 6.2](https://github.com/jrsoftware/issrc/releases/tag/is-6_2_2).
-2. Run `installer\build.cmd`.
-3. The installer appears in `installer\output\`.
-
-To rebuild the `lawinserver.exe` starter: `%WINDIR%\Microsoft.NET\Framework64\v3.5\csc.exe /nologo /out:lawinserver.exe tools\lawinserver-shim\LawinServerShim.cs`
+- **`w7compat.dll`**: a small DLL written for this port that provides those missing functions (file paths, networking, secure random numbers for HTTPS, and on Vista touch input, a thread lock and a few others). Wherever Windows already has the real function, it uses that, so nothing changes on Windows 8, 10 and 11.
+- **Patched launcher files**: `flutter_windows.dll` and one plugin now point their missing functions at `w7compat.dll` instead of Windows.
+- **Backend on Node.js 22**: the built-in backend originally used Node.js 20, which doesn't run on Windows 7. The first release for Windows 7 (the version that needed VxKex) used Node.js 13. The latest release, which runs natively on Windows 7 and Vista, uses [W7Revived](https://w7revived.chefkiss.dev/)'s Windows 7 build of Node.js 22, which also runs on Vista with the Extended Kernel.
+- **Fortnite on Vista**: the game's own files aren't modified. Vista gets what Fortnite needs instead: the Extended Kernel, DirectX 11 (KB971512, one of the four Platform Update parts, each downloaded on its own), and the DirectX June 2010 runtime. Builds that come with DXVK files need those moved out, because Vista can't run DXVK.
 
 ## Credits
 
-- **Windows 7 port:** vibecoded by [XMTLXY](https://github.com/XMTLXY)
+- **Windows 7 and Vista port:** vibecoded by [XMTLXY](https://github.com/XMTLXY)
 - **AI used:** [Claude Code](https://claude.com/claude-code) (Claude Opus 5.5)
 - **Reboot Launcher:** [Auties00](https://github.com/Auties00/reboot_launcher), the original project
-- **LawinServer:** the backend bundled with Reboot Launcher
-- **Node.js:** [Node.js](https://nodejs.org/) 13.14.0, license in `data\flutter_assets\assets\backend\node\LICENSE`
+- **Node.js:** [Node.js](https://nodejs.org/) 22.13.1, license in `data\flutter_assets\assets\backend\node\LICENSE`
+- **W7Revived:** [W7Revived](https://w7revived.chefkiss.dev/), for the Windows 7 build of Node.js 22 (`node-v22.13.1-win-x64.7z`)
+- **Tiny C Compiler:** used to build `w7compat.dll`
 
 This is an unofficial fork. Reboot Launcher and its files belong to their original authors.
 
